@@ -1,0 +1,63 @@
+plugins {
+	id 'org.springframework.boot' version '2.6.4'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java'
+}
+
+group = 'com.capstone'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+  implementation 'junit:junit:4.13.1'
+  compileOnly 'org.projectlombok:lombok'
+
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation 'mysql:mysql-connector-java'
+
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'mysql:mysql-connector-java'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-configuration-processor'
+	//jdbc
+	implementation group: 'org.apache.commons', name: 'commons-dbcp2', version: '2.7.0'
+	//implementation group: 'org.springframework', name: 'spring-jdbc'
+	implementation 'org.apache.tomcat:tomcat-jdbc:10.0.17'
+
+	//html
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+	// stomp
+	implementation group: 'org.webjars', name: 'stomp-websocket', version: '2.3.3-1'
+
+
+
+	// rds
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	implementation 'mysql:mysql-connector-java'
+
+	// websocket
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
