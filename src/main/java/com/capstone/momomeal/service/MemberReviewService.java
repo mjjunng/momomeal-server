@@ -23,6 +23,6 @@ public class MemberReviewService {
     }
 
     public void addReview(MemberReview memberReview) {
-        this.memberReviewRepository.saveReview(memberReview);
+        memberReviewRepository.saveReview(memberReview);
     }
 }

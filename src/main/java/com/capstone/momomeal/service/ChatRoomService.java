@@ -15,6 +15,7 @@ import java.util.Optional;
 public class ChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
     private final JoinedChatRoomService joinedChatRoomService;
+    private final RecommendCategoryService recommendCategoryService;
 
     /**
      * 채팅방 저장 메서드
@@ -31,17 +32,18 @@ public class ChatRoomService {
      * 채팅방 생성 메서드
      * @param member    해당 채팅방 생성자
      * @param requestDTO   채팅방의 정보(타이틀, 최대인원수...)
-     * @return 생성한 채팅방(ChatRoom) id값
+     * @return 생성한 채팅방(ChatRoom)
      */
     @Transactional
-    public Long createChatRoom(Members member, ChatRoomRequestDTO requestDTO, int distance){
+    public ChatRoom createChatRoom(Members member, ChatRoomRequestDTO requestDTO){
         // string -> Category enum 타입 변환
         TransStringToEnum te = new TransStringToEnum();
         Category category = te.transferStringToEnum(requestDTO.getCategoryName());
 
         // 채팅방 생성
         ChatRoom chatRoom = new ChatRoom(category, requestDTO.getTitle(), requestDTO.getHostId(),
-                requestDTO.getMaxCapacity(), requestDTO.getStoreName(), requestDTO.getPickupPlaceName(), distance);
+                requestDTO.getMaxCapacity(), requestDTO.getStoreName(), requestDTO.getPickupPlaceName(),
+                requestDTO.getPickupPlaceXCoord(), requestDTO.getPickupPlaceYCoord());
 
         save(chatRoom);
 
@@ -49,7 +51,13 @@ public class ChatRoomService {
         JoinedChatRoom joinedChatRoom = new JoinedChatRoom(chatRoom, MemberStatus.HOST);
         joinedChatRoom.setMember(member);
         joinedChatRoomService.save(joinedChatRoom);
-        return chatRoom.getId();
+
+        // 해당 사용자가 참여한 채팅방의 카테고리 가중치 증가
+        RecommendCategory recommendCategory = member.getRecommendCategory();
+        if (recommendCategory != null){
+            recommendCategoryService.addValue(recommendCategory, requestDTO.getCategoryName(), 1);
+        }
+        return chatRoom;
 
     }
 
@@ -81,6 +89,10 @@ public class ChatRoomService {
         return chatRoomRepository.findExceptParticipatedChatRoomOrderByDistance(participatedChatRoomIds);
     }
 
+    public List<ChatRoom> findByCategoryIn(List<Category> categories, List<Long> participatedChatRoomIds){
+        return chatRoomRepository.findByCategoryIn(categories, participatedChatRoomIds);
+    }
+
 
     @Transactional
     public int delete(Long chatRoomId){
@@ -90,6 +102,11 @@ public class ChatRoomService {
     @Transactional
     public List<ChatRoom> getSearchedChatRooms(String keyword){
         return chatRoomRepository.findByKeyword(keyword);
+    }
+
+    @Transactional
+    public List<ChatRoom> getSearchedAndExceptParticipatedChatRooms(String keyword, List<Long> participatedChatRoomIds){
+        return chatRoomRepository.findExceptParticipatedByKeyword(keyword, participatedChatRoomIds);
     }
 
 }

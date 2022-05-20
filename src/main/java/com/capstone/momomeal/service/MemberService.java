@@ -1,5 +1,6 @@
 package com.capstone.momomeal.service;
 
+import com.capstone.momomeal.domain.MemberDTO;
 import com.capstone.momomeal.domain.Members;
 import com.capstone.momomeal.repository.MemberRepository;
 import java.util.List;
@@ -33,16 +34,30 @@ public class MemberService {
         }
     }
 
-    @Transactional(
-            readOnly = true
-    )
+    public Boolean updateUser(Long userId, String email, String RealName, String img){
+        try {
+            Optional<Members> member_s = memberRepository.findOne(userId);
+            if(member_s == null){
+                return false;
+            }
+            else {
+                Members member = member_s.get();
+                member.setEmail(email);
+                member.setRealName(RealName);
+                member.setImg(img);
+                return true;
+            }
+        }catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Transactional(readOnly = true)
     public List<Members> findAll() {
         return this.memberRepository.findAll();
     }
 
-    @Transactional(
-            readOnly = true
-    )
+    @Transactional(readOnly = true)
     public Optional<Members> findEmail(String email) {
         Optional<Members> result = this.memberRepository.findEmail(email);
         if (result != null) {
@@ -52,11 +67,56 @@ public class MemberService {
         }
     }
 
-    @Transactional(
-            readOnly = true
-    )
+    @Transactional(readOnly = true)
     public Optional<Members> Login(String email, String pwd) {
         return this.memberRepository.findIdAndPwd(email, pwd);
+    }
 
+    public Boolean updateUser(Long userId, String email, String RealName){
+        try {
+            Members member = memberRepository.findById(userId);
+
+            member.setEmail(email);
+            member.setRealName(RealName);
+//            member.setImg(img);
+            return true;
+        }catch (Exception e) {
+            return false;
+        }
+    }
+
+    public Boolean setCoordinate(Long userId, Double x, Double y, String address){
+        try {
+            Members member = memberRepository.findById(userId);
+
+            member.setX_value(x);
+            member.setY_value(y);
+            member.setAddress(address);
+
+            return true;
+        }catch (Exception e){
+            return false;
+        }
+    }
+
+    public Integer getMember_rate(Long user_id){
+        Optional<Members> members = memberRepository.findOne(user_id);
+        if(members.equals(null)){
+            return null;
+        }
+        Members member = members.get();
+        Integer returnRate = Integer.valueOf(member.TotalRate());
+
+        return returnRate;
+    }
+
+    public Integer getUserTotalRate(Long user_id){
+        Optional<Members> one = memberRepository.findOne(user_id);
+
+        if(one.equals(null)){
+            return null;
+        }
+        Members member = one.get();
+        return member.TotalRate();
     }
 }

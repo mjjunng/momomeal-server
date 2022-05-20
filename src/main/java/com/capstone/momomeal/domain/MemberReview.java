@@ -14,26 +14,18 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(
-        name = "member_review"
-)
+@Table(name = "member_review")
 public class MemberReview {
     @Id
     @GeneratedValue
     @NotNull
-    @Column(
-            name = "review_id"
-    )
+    @Column(name = "review_id")
     private Long review_id;
     private String review_text;
     @Enumerated(EnumType.STRING)
     private RateStatus rate;
-    @ManyToOne(
-            fetch = FetchType.LAZY
-    )
-    @JoinColumn(
-            name = "user_id"
-    )
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private Members member;
 
     public MemberReview() {
@@ -79,8 +71,13 @@ public class MemberReview {
         this.member = member;
     }
 
+    @Override
     public String toString() {
-        Long var10000 = this.getReview_id();
-        return "MemberReview(review_id=" + var10000 + ", review_text=" + this.getReview_text() + ", rate=" + this.getRate() + ", member=" + this.getMember() + ")";
+        return "MemberReview{" +
+                "review_id=" + review_id +
+                ", review_text='" + review_text + '\'' +
+                ", rate=" + rate +
+                ", member=" + member +
+                '}';
     }
 }

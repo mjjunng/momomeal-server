@@ -1,7 +1,7 @@
 package com.capstone.momomeal.repository;
 
-
 import com.capstone.momomeal.domain.MemberForm;
+import com.capstone.momomeal.domain.Members;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -14,11 +14,11 @@ public class MemoryUserRepository {
     public MemoryUserRepository() {
     }
 
-    public void loginSuccess(Long userId, String email, String pwd, String userName) {
-        memberForm.setUser_id(userId);
-        memberForm.setUserEmail(email);
-        memberForm.setPwd(pwd);
-        memberForm.setUserName(userName);
+    public void loginSuccess(Members member) {
+        memberForm.setUser_id(member.getUser_id());
+        memberForm.setUserEmail(member.getEmail());
+        memberForm.setPwd(member.getPwd());
+        memberForm.setUserName(member.getRealName());
         memberForm.setLogin(true);
     }
 
@@ -29,4 +29,13 @@ public class MemoryUserRepository {
     public boolean checkLogin() {
         return memberForm.isLogin();
     }
+
+    public void logOut(){
+        memberForm.setUser_id(null);
+        memberForm.setUserEmail(null);
+        memberForm.setPwd(null);
+        memberForm.setUserName(null);
+        memberForm.setLogin(false);
+    }
+
 }
